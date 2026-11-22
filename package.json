@@ -1,0 +1,27 @@
+{
+  "name": "kaziwalid-portfolio",
+  "type": "module",
+  "version": "3.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter-tight": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource/instrument-serif": "^5.3.0",
+    "astro": "^7.4.13"
+  },
+  "description": "Personal portfolio of Kazi Walid Hasan, built with Astro",
+  "author": "Kazi Walid Hasan",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kaKazi107/portfolio"
+  },
+  "engines": {
+    "node": ">=22.23"
+  }
+}

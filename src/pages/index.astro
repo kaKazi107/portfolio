@@ -1,0 +1,539 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import ProjectVisual from '../components/ProjectVisual.astro';
+import hero from '../assets/photos/hero.jpg';
+import { site, ticker, projects, changelog, now } from '../data/site';
+
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<Base>
+  <!-- ============ HERO ============ -->
+  <section class="hero wrap">
+    <div class="hero-text">
+      <p class="status mono" data-reveal><span class="dot"></span>{site.status}</p>
+      <h1 class="name" data-reveal style="--d:.05s">
+        <span class="first">{site.first}</span>
+        <span class="last serif">{site.last}<span class="period">.</span></span>
+      </h1>
+      <p class="intro" data-reveal style="--d:.15s">{site.intro}</p>
+      <div class="ctas" data-reveal style="--d:.22s">
+        <a href="#work" class="btn btn--solid">See my work <span class="arrow" aria-hidden="true">↓</span></a>
+        <a href="#contact" class="btn btn--ghost">Get in touch</a>
+      </div>
+      <dl class="meta mono" data-reveal style="--d:.3s">
+        <div><dt class="faint">Based in</dt><dd>{site.location}</dd></div>
+        <div><dt class="faint">Studying</dt><dd>B.Sc. CSE · {site.universityShort}</dd></div>
+        <div><dt class="faint">Semester</dt><dd>{site.version}</dd></div>
+      </dl>
+    </div>
+    <figure class="portrait" data-reveal style="--d:.12s">
+      <Picture
+        src={hero}
+        alt="Kazi Walid Hasan in a black suit and tie, standing in a brick-walled corridor, in black and white"
+        widths={[420, 640, 860, 1100, 1400]}
+        sizes="(max-width: 860px) 92vw, 40vw"
+        formats={['avif', 'webp']}
+        loading="eager"
+        fetchpriority="high"
+      />
+      <figcaption class="mono"><span>Fig. 01</span><span class="faint">K.W.H., 2026</span></figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ TICKER ============ -->
+  <div class="ticker" aria-label="Highlights">
+    <div class="track">
+      {[0, 1].map((k) => (
+        <ul aria-hidden={k === 1 ? 'true' : undefined}>
+          {ticker.map((t) => <li class="mono">{t}<span class="star" aria-hidden="true">✦</span></li>)}
+        </ul>
+      ))}
+    </div>
+  </div>
+
+  <!-- ============ WORK ============ -->
+  <section class="section wrap" id="work">
+    <header class="section-head" data-reveal>
+      <span class="num mono">01</span>
+      <h2>Selected <span class="serif">work</span></h2>
+      <span class="mono faint">({pad(projects.length)})</span>
+    </header>
+
+    <div class="projects">
+      {
+        projects.map((p, i) => (
+          <article class="project" data-reveal>
+            <a href={`/work/${p.slug}`} class="project-link">
+              <div class="p-visual">
+                <ProjectVisual project={p} />
+              </div>
+              <div class="p-body">
+                <p class="p-meta mono">
+                  <span>No. {pad(i + 1)}</span>
+                  <span>{p.year}</span>
+                  <span>{p.team}</span>
+                  {p.status && <span class="pill">{p.status}</span>}
+                  {p.result && <span class="pill pill--solid">{p.result}</span>}
+                </p>
+                <h3 class="p-title">{p.title}</h3>
+                <p class="p-one">{p.oneLiner}</p>
+                {p.event && <p class="p-event mono faint">{p.event}</p>}
+                <p class="p-role">
+                  <span class="mono faint">My part</span>
+                  {p.role}
+                </p>
+                <div class="tags">{p.stack.map((s) => <span class="tag">{s}</span>)}</div>
+                <span class="p-cta">Read the case study <span aria-hidden="true">→</span></span>
+              </div>
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ============ CHANGELOG ============ -->
+  <section class="section wrap" id="changelog">
+    <header class="section-head" data-reveal>
+      <span class="num mono">02</span>
+      <h2>Change<span class="serif">log</span></h2>
+      <span class="mono faint">v{site.version}</span>
+    </header>
+    <p class="lede muted" data-reveal>
+      Hackathons, milestones and things I shipped, newest first. This site is versioned like software: the
+      version number is my semester, so right now I’m on <strong>v{site.version}</strong>.
+    </p>
+    <ol class="log">
+      {
+        changelog.map((e) => {
+          const Tag = e.href ? 'a' : 'div';
+          return (
+            <li data-reveal>
+              <Tag class="log-row" href={e.href}>
+                <span class="log-date mono">{e.date}</span>
+                <span class="log-main">
+                  <span class="log-title">{e.title}</span>
+                  <span class="log-note muted">{e.note}</span>
+                </span>
+                <span class="log-tag">{e.tag && <span class="pill">{e.tag}</span>}</span>
+              </Tag>
+            </li>
+          );
+        })
+      }
+    </ol>
+  </section>
+
+  <!-- ============ NOW ============ -->
+  <section class="section wrap" id="now">
+    <header class="section-head" data-reveal>
+      <span class="num mono">03</span>
+      <h2><span class="serif">Now</span></h2>
+      <span class="mono faint">Updated {site.updated}</span>
+    </header>
+    <div class="now">
+      {
+        now.map((n, i) => (
+          <div class="now-item" data-reveal style={`--d:${i * 0.08}s`}>
+            <p class="mono faint">{n.label}</p>
+            <p class="now-text">{n.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="section wrap" id="contact">
+    <header class="section-head" data-reveal>
+      <span class="num mono">04</span>
+      <h2>Say <span class="serif">hello</span></h2>
+      <span></span>
+    </header>
+    <div class="contact" data-reveal>
+      <p class="contact-lede muted">
+        Have an internship, a research opening, or a hackathon team that needs one more person? Email is the best way to
+        reach me.
+      </p>
+      <a class="email" href={`mailto:${site.email}`}>{site.email}<span class="arrow" aria-hidden="true">↗</span></a>
+      <div class="contact-actions">
+        <button class="btn btn--ghost" type="button" data-copy={site.email}>
+          <span data-copy-label>Copy email</span>
+        </button>
+        <a class="btn btn--ghost" href={site.linkedin} target="_blank" rel="noopener">LinkedIn <span class="arrow" aria-hidden="true">↗</span></a>
+        <a class="btn btn--ghost" href={site.github} target="_blank" rel="noopener">GitHub <span class="arrow" aria-hidden="true">↗</span></a>
+        <a class="btn btn--ghost" href="/resume">Resume</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: clamp(24px, 5vw, 72px);
+    align-items: end;
+    padding-top: clamp(28px, 6vw, 72px);
+    padding-bottom: clamp(36px, 5vw, 64px);
+    min-height: calc(100svh - 60px - 52px);
+  }
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.55em 0.95em;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    margin: 0 0 clamp(20px, 4vw, 40px);
+    text-transform: none;
+    letter-spacing: 0.01em;
+    font-size: 0.78rem;
+  }
+  .name {
+    font-size: clamp(3.6rem, 10.4vw, 10rem);
+    font-weight: 650;
+    letter-spacing: -0.055em;
+    line-height: 0.86;
+    margin: 0 0 clamp(20px, 3vw, 36px);
+  }
+  .name > span {
+    display: block;
+  }
+  .name .last {
+    font-weight: 400;
+    font-size: 1.08em;
+    letter-spacing: -0.03em;
+    line-height: 0.9;
+  }
+  .period {
+    font-family: var(--sans);
+    font-style: normal;
+    color: var(--live);
+  }
+  .intro {
+    font-size: clamp(1.15rem, 1.9vw, 1.5rem);
+    line-height: 1.38;
+    letter-spacing: -0.012em;
+    max-width: 33ch;
+    margin-bottom: 28px;
+  }
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: clamp(32px, 5vw, 56px);
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 36px;
+    margin: 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  .meta dt {
+    margin-bottom: 4px;
+  }
+  .meta dd {
+    margin: 0;
+  }
+  .portrait {
+    margin: 0;
+    justify-self: end;
+    width: 100%;
+    max-width: 520px;
+  }
+  .portrait :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+  .portrait figcaption {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+  }
+
+  /* ---------- Ticker ---------- */
+  .ticker {
+    background: var(--ink);
+    color: var(--paper);
+    overflow: hidden;
+    padding: 15px 0;
+  }
+  .track {
+    display: flex;
+    width: max-content;
+    animation: marquee 38s linear infinite;
+  }
+  .ticker:hover .track {
+    animation-play-state: paused;
+  }
+  .track ul {
+    display: flex;
+    flex-shrink: 0;
+  }
+  .track li {
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    font-size: 0.8rem;
+  }
+  .star {
+    margin: 0 26px;
+    opacity: 0.6;
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* ---------- Projects ---------- */
+  .projects {
+    display: grid;
+    gap: clamp(48px, 7vw, 96px);
+  }
+  .project-link {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: clamp(20px, 4vw, 56px);
+    align-items: center;
+  }
+  .project:nth-child(even) .p-visual {
+    order: 2;
+  }
+  .p-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    margin-bottom: 14px;
+    color: var(--ink-2);
+  }
+  .pill {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.3em 0.7em;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    color: var(--ink);
+    white-space: nowrap;
+  }
+  .pill--solid {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .p-title {
+    font-size: clamp(2.4rem, 5.5vw, 4.4rem);
+    letter-spacing: -0.05em;
+    margin-bottom: 14px;
+    transition: letter-spacing 0.5s var(--ease);
+  }
+  .project-link:hover .p-title {
+    letter-spacing: -0.035em;
+  }
+  .p-one {
+    font-size: 1.1rem;
+    line-height: 1.45;
+    max-width: 42ch;
+  }
+  .p-event {
+    margin-top: -6px;
+  }
+  .p-role {
+    display: grid;
+    gap: 4px;
+    color: var(--ink-2);
+    font-size: 0.98rem;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 16px;
+  }
+  .p-cta {
+    display: inline-block;
+    margin-top: 22px;
+    font-weight: 500;
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 2px;
+  }
+  .p-cta span {
+    display: inline-block;
+    transition: transform 0.3s var(--ease);
+  }
+  .project-link:hover .p-cta span {
+    transform: translateX(4px);
+  }
+
+  /* ---------- Changelog ---------- */
+  .lede {
+    max-width: 56ch;
+    font-size: 1.05rem;
+    margin-bottom: 28px;
+  }
+  .lede strong {
+    color: var(--ink);
+    font-family: var(--mono);
+    font-weight: 500;
+  }
+  .log {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .log-row {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr) auto;
+    gap: 8px 32px;
+    align-items: baseline;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line);
+    transition: padding 0.4s var(--ease), background-color 0.4s var(--ease);
+  }
+  a.log-row:hover {
+    padding-left: 12px;
+    padding-right: 12px;
+    background: var(--paper-2);
+  }
+  .log-date {
+    color: var(--ink-3);
+  }
+  .log-main {
+    display: grid;
+    gap: 4px;
+  }
+  .log-title {
+    font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+    font-weight: 550;
+    letter-spacing: -0.02em;
+  }
+  .log-note {
+    max-width: 62ch;
+  }
+
+  /* ---------- Now ---------- */
+  .now {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  .now-item {
+    padding: 22px 24px 8px 0;
+  }
+  .now-item + .now-item {
+    padding-left: 24px;
+    border-left: 1px solid var(--line);
+  }
+  .now-text {
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    margin-top: 10px;
+  }
+
+  /* ---------- Contact ---------- */
+  .contact-lede {
+    max-width: 50ch;
+    font-size: 1.1rem;
+  }
+  .email {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.25em;
+    font-size: clamp(1.6rem, 5.6vw, 4.6rem);
+    font-weight: 600;
+    letter-spacing: -0.045em;
+    line-height: 1.1;
+    margin: 18px 0 28px;
+    word-break: break-all;
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 2px no-repeat;
+    transition: background-size 0.5s var(--ease);
+  }
+  .email:hover {
+    background-size: 100% 2px;
+  }
+  .email .arrow {
+    font-size: 0.6em;
+    transition: transform 0.3s var(--ease);
+  }
+  .email:hover .arrow {
+    transform: translate(4px, -4px);
+  }
+  .contact-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .contact-actions button {
+    background: none;
+    color: inherit;
+    font: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px) {
+    .hero {
+      grid-template-columns: 1fr;
+      min-height: 0;
+      align-items: start;
+    }
+    .portrait {
+      justify-self: stretch;
+      max-width: none;
+      order: 2;
+    }
+    .portrait :global(img) {
+      max-height: 68svh;
+      object-position: 50% 20%;
+    }
+    .project-link {
+      grid-template-columns: 1fr;
+    }
+    .project:nth-child(even) .p-visual {
+      order: 0;
+    }
+    .log-row {
+      grid-template-columns: 1fr auto;
+    }
+    .log-date {
+      grid-column: 1 / -1;
+    }
+    .log-main {
+      grid-column: 1;
+    }
+    .now {
+      grid-template-columns: 1fr;
+    }
+    .now-item,
+    .now-item + .now-item {
+      padding: 18px 0 6px;
+      border-left: 0;
+      border-bottom: 1px solid var(--line);
+    }
+  }
+  @media (max-width: 480px) {
+    .log-row {
+      grid-template-columns: 1fr;
+    }
+    .log-tag:empty {
+      display: none;
+    }
+    .email {
+      font-size: clamp(1.35rem, 7.4vw, 2rem);
+      word-break: normal;
+      overflow-wrap: anywhere;
+    }
+  }
+</style>

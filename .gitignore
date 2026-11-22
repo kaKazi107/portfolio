@@ -1,0 +1,24 @@
+# Dependencies and build output
+node_modules/
+dist/
+.astro/
+
+# Environment
+.env
+.env.*
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
+
+# Local tooling
+.claude/
+
+# Private material: kept locally, never published
+raw/
+notes/
+Profile.pdf
+*.pdf

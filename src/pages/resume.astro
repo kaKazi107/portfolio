@@ -1,0 +1,240 @@
+---
+import Base from '../layouts/Base.astro';
+import { site, projects, changelog, education, skills, spoken } from '../data/site';
+
+const resumeProjects = [
+  {
+    p: projects[0],
+    bullets: [
+      'Local-first Android diary for movies, shows, music, food and places on a visual calendar; works fully offline on SQLite.',
+      'Optional two-way cloud sync with Supabase (Postgres, Auth, Storage, row-level security), using tombstone deletes and stable timestamps.',
+      'One-tap metadata auto-fill from iTunes, TVMaze and OpenStreetMap behind a single search layer with timeouts.',
+    ],
+  },
+  {
+    p: projects[1],
+    bullets: [
+      'Browser story game teaching kids (7–12) Mars survival with real NASA space-weather data, in English and Bangla; live on Cloudflare Pages.',
+      'Worked on the main story and decision design; coded Part 2, the dust-storm chapter and its decisions.',
+    ],
+  },
+  {
+    p: projects[2],
+    bullets: [
+      'Offline peer-to-peer messenger over Bluetooth mesh, built on a teammate’s Bitchat-based client. 4th place.',
+      'Reworked the main UI and frontend; planned the team’s demo and pitch.',
+    ],
+  },
+];
+const awards = changelog.filter((c) => c.tag && c.tag !== 'Building');
+const siteUrl = (Astro.site ?? Astro.url).origin;
+const host = siteUrl.replace(/^https?:\/\//, '');
+---
+
+<Base title="Resume" description={`Resume of ${site.name}`}>
+  <div class="wrap r-tools no-print">
+    <p class="muted">A one-page resume, generated from the same content as this site.</p>
+    <button class="btn btn--solid" type="button" onclick="window.print()">Save as PDF</button>
+  </div>
+
+  <article class="sheet">
+    <header class="r-head">
+      <div>
+        <h1>{site.name}</h1>
+        <p class="r-sub">Computer Science and Engineering student · {site.status}</p>
+      </div>
+      <ul class="r-contact">
+        <li>{site.location}</li>
+        <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+        <li><a href={siteUrl}>{host}</a></li>
+        <li><a href={site.github}>github.com/{site.githubHandle}</a></li>
+        <li><a href={site.linkedin}>linkedin.com/in/{site.linkedinHandle}</a></li>
+      </ul>
+    </header>
+
+    <section>
+      <h2>Education</h2>
+      {
+        education.map((e) => (
+          <div class="r-item">
+            <div class="r-line">
+              <strong>{e.school}</strong>
+              <span>{e.when}</span>
+            </div>
+            <p>{e.detail}{e.note ? ` · ${e.note}` : ''}</p>
+          </div>
+        ))
+      }
+    </section>
+
+    <section>
+      <h2>Projects</h2>
+      {
+        resumeProjects.map(({ p, bullets }) => (
+          <div class="r-item">
+            <div class="r-line">
+              <strong>
+                {p.title} <span class="r-dim">· {p.team}{p.event ? ` · ${p.event}` : ''}</span>
+              </strong>
+              <span>{p.status ?? p.year}</span>
+            </div>
+            <p class="r-dim">{p.stack.join(', ')}</p>
+            <ul>
+              {bullets.map((b) => <li>{b}</li>)}
+            </ul>
+          </div>
+        ))
+      }
+    </section>
+
+    <section>
+      <h2>Hackathons &amp; recognition</h2>
+      {
+        awards.map((a) => (
+          <div class="r-line r-award">
+            <span><strong>{a.tag}</strong> · {a.title}</span>
+            <span>{a.date}</span>
+          </div>
+        ))
+      }
+    </section>
+
+    <section>
+      <h2>Skills</h2>
+      {
+        skills.map((s) => (
+          <p class="r-skill"><strong>{s.group}:</strong> {s.items.join(', ')}</p>
+        ))
+      }
+      <p class="r-skill"><strong>Spoken:</strong> {spoken.join(', ')}</p>
+    </section>
+  </article>
+</Base>
+
+<style>
+  .r-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 32px;
+    padding-bottom: 24px;
+  }
+  .r-tools p {
+    margin: 0;
+  }
+  .r-tools button {
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.95rem;
+  }
+  .sheet {
+    max-width: 820px;
+    margin: 0 auto;
+    background: #fff;
+    color: #111;
+    padding: clamp(24px, 6vw, 56px);
+    border: 1px solid var(--line);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .sheet a {
+    color: inherit;
+  }
+  .r-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding-bottom: 14px;
+    border-bottom: 2px solid #111;
+  }
+  .r-head h1 {
+    font-size: 30px;
+    letter-spacing: -0.04em;
+    margin-bottom: 6px;
+  }
+  .r-sub {
+    margin: 0;
+    color: #555;
+  }
+  .r-contact {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    text-align: right;
+    color: #333;
+    line-height: 1.6;
+  }
+  section {
+    margin-top: 16px;
+  }
+  h2 {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 8px;
+  }
+  .r-item {
+    margin-bottom: 9px;
+  }
+  .r-item p {
+    margin: 0;
+  }
+  .r-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .r-line > span:last-child {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: #555;
+    white-space: nowrap;
+  }
+  .r-dim {
+    color: #666;
+    font-weight: 400;
+  }
+  .r-item ul {
+    margin-top: 3px;
+    padding-left: 16px;
+    list-style: disc;
+  }
+  .r-item li {
+    margin: 2px 0;
+  }
+  .r-award {
+    margin-bottom: 4px;
+  }
+  .r-skill {
+    margin: 0 0 3px;
+  }
+  @media (max-width: 600px) {
+    .r-contact {
+      text-align: left;
+    }
+    .r-line {
+      flex-direction: column;
+      gap: 2px;
+    }
+  }
+  @media print {
+    @page {
+      size: A4;
+      margin: 14mm;
+    }
+    :global(body) {
+      background: #fff !important;
+    }
+    .sheet {
+      border: 0;
+      padding: 0;
+      max-width: none;
+    }
+  }
+</style>

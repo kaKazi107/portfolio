@@ -1,0 +1,272 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import ProjectVisual from '../../components/ProjectVisual.astro';
+import { projects, type Project } from '../../data/site';
+
+export function getStaticPaths() {
+  return projects.map((p, i) => ({
+    params: { slug: p.slug },
+    props: { project: p, index: i, next: projects[(i + 1) % projects.length] },
+  }));
+}
+
+const { project: p, index, next } = Astro.props as { project: Project; index: number; next: Project };
+const facts = [
+  { k: 'Role', v: p.role },
+  { k: 'Team', v: p.team },
+  p.event ? { k: 'Event', v: p.result ? `${p.event} · ${p.result}` : p.event } : null,
+  p.status ? { k: 'Status', v: p.status } : null,
+  { k: 'Stack', v: p.stack.join(', ') },
+].filter(Boolean) as { k: string; v: string }[];
+---
+
+<Base title={p.title} description={p.oneLiner}>
+  <article class="wrap cs">
+    <a href="/#work" class="back mono">← All work</a>
+
+    <header class="cs-head">
+      <p class="cs-meta mono">
+        <span>No. {String(index + 1).padStart(2, '0')}</span>
+        <span>{p.kind}</span>
+        <span>{p.year}</span>
+        {p.result && <span class="pill pill--solid">{p.result}</span>}
+        {p.status && <span class="pill">{p.status}</span>}
+      </p>
+      <h1 data-reveal>{p.title}</h1>
+      <p class="cs-one" data-reveal style="--d:.08s">{p.oneLiner}</p>
+      {
+        p.links.length > 0 && (
+          <div class="cs-links" data-reveal style="--d:.14s">
+            {p.links.map((l, i) => (
+              <a href={l.href} target="_blank" rel="noopener" class:list={['btn', i === 0 ? 'btn--solid' : 'btn--ghost']}>
+                {l.label} <span class="arrow" aria-hidden="true">↗</span>
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    <div class="cs-visual" data-reveal>
+      <ProjectVisual project={p} eager />
+    </div>
+
+    <div class="cs-grid">
+      <aside class="facts">
+        <dl>
+          {
+            facts.map((f) => (
+              <div>
+                <dt class="mono faint">{f.k}</dt>
+                <dd>{f.v}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </aside>
+      <div class="prose">
+        {
+          p.sections.map((s) => (
+            <section data-reveal>
+              <h2>{s.heading}</h2>
+              {s.body?.map((b) => <p>{b}</p>)}
+              {s.list && (
+                <ul>
+                  {s.list.map((li) => <li>{li}</li>)}
+                </ul>
+              )}
+            </section>
+          ))
+        }
+      </div>
+    </div>
+
+    {
+      p.images && p.images.length > 1 && (
+        <section class="gallery">
+          <h2 class="mono faint">Screens</h2>
+          <div class="shots">
+            {p.images.map((img) => (
+              <figure class="shot" data-reveal>
+                <Image src={img.src} alt={img.alt} widths={[300, 450, 600]} sizes="(max-width: 720px) 45vw, 260px" />
+              </figure>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <a href={`/work/${next.slug}`} class="next">
+      <span class="mono faint">Next project</span>
+      <span class="next-title">{next.title} <span aria-hidden="true">→</span></span>
+    </a>
+  </article>
+</Base>
+
+<style>
+  .cs {
+    padding-top: clamp(24px, 4vw, 48px);
+  }
+  .back {
+    display: inline-block;
+    color: var(--ink-2);
+    margin-bottom: clamp(28px, 5vw, 56px);
+  }
+  .back:hover {
+    color: var(--ink);
+  }
+  .cs-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    color: var(--ink-2);
+    margin-bottom: 16px;
+  }
+  .pill {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    padding: 0.3em 0.7em;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    color: var(--ink);
+  }
+  .pill--solid {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  h1 {
+    font-size: clamp(3.4rem, 12vw, 10rem);
+    letter-spacing: -0.06em;
+    line-height: 0.88;
+    margin-bottom: 22px;
+  }
+  .cs-one {
+    font-size: clamp(1.2rem, 2.2vw, 1.6rem);
+    line-height: 1.35;
+    letter-spacing: -0.015em;
+    max-width: 40ch;
+  }
+  .cs-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .cs-visual {
+    margin: clamp(36px, 6vw, 72px) 0;
+  }
+  .cs-visual :global(.plate) {
+    aspect-ratio: 16 / 9;
+  }
+  .cs-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: clamp(28px, 6vw, 96px);
+  }
+  .facts {
+    position: sticky;
+    top: 84px;
+    align-self: start;
+  }
+  .facts dl {
+    margin: 0;
+    border-top: 1px solid var(--ink);
+  }
+  .facts div {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .facts dd {
+    margin: 6px 0 0;
+    color: var(--ink);
+  }
+  .prose section {
+    margin-bottom: clamp(36px, 5vw, 56px);
+  }
+  .prose h2 {
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    letter-spacing: -0.035em;
+    margin-bottom: 16px;
+  }
+  .prose p {
+    font-size: 1.08rem;
+    line-height: 1.65;
+    color: var(--ink-2);
+    max-width: 62ch;
+  }
+  .prose ul {
+    border-top: 1px solid var(--line);
+    max-width: 62ch;
+  }
+  .prose li {
+    padding: 12px 0 12px 28px;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    color: var(--ink-2);
+  }
+  .prose li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--ink);
+  }
+  .gallery {
+    margin-top: clamp(24px, 4vw, 48px);
+  }
+  .gallery h2 {
+    font-size: 0.75rem;
+    margin-bottom: 18px;
+    font-weight: 400;
+  }
+  .shots {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: clamp(10px, 2vw, 24px);
+  }
+  .shot {
+    margin: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 5px solid #0d0d0c;
+    background: #0d0d0c;
+    outline: 1px solid var(--line-strong);
+  }
+  .next {
+    display: grid;
+    gap: 8px;
+    margin-top: clamp(64px, 10vw, 128px);
+    padding-top: 24px;
+    border-top: 1px solid var(--ink);
+  }
+  .next-title {
+    font-size: clamp(2.4rem, 8vw, 6rem);
+    font-weight: 600;
+    letter-spacing: -0.055em;
+    line-height: 1;
+  }
+  .next-title span {
+    display: inline-block;
+    transition: transform 0.4s var(--ease);
+  }
+  .next:hover .next-title span {
+    transform: translateX(10px);
+  }
+  @media (max-width: 860px) {
+    .cs-grid {
+      grid-template-columns: 1fr;
+    }
+    .facts {
+      position: static;
+    }
+    .cs-visual :global(.plate) {
+      aspect-ratio: 4 / 3;
+    }
+    .shots {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

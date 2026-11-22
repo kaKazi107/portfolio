@@ -1,0 +1,85 @@
+---
+// Bluetooth mesh illustration for Songket: a message hops A → B through nearby phones.
+const nodes = [
+  { id: 'a', x: 70, y: 250, label: 'A' },
+  { id: 'n1', x: 190, y: 120 },
+  { id: 'n2', x: 230, y: 300 },
+  { id: 'n3', x: 340, y: 190 },
+  { id: 'n4', x: 400, y: 330 },
+  { id: 'n5', x: 450, y: 90 },
+  { id: 'b', x: 540, y: 220, label: 'B' },
+];
+const edges = [
+  ['a', 'n1'], ['a', 'n2'], ['n1', 'n3'], ['n2', 'n3'], ['n2', 'n4'],
+  ['n3', 'n4'], ['n3', 'n5'], ['n5', 'b'], ['n4', 'b'], ['n1', 'n5'],
+];
+const by = Object.fromEntries(nodes.map((n) => [n.id, n]));
+const route = ['a', 'n2', 'n3', 'n5', 'b'].map((id) => `${by[id].x},${by[id].y}`).join(' ');
+---
+
+<svg class="mesh" viewBox="0 0 610 420" role="img" aria-label="Diagram: a message travels from phone A to phone B by hopping through three nearby phones over Bluetooth, with no internet.">
+  <g class="edges">
+    {edges.map(([f, t]) => <line x1={by[f].x} y1={by[f].y} x2={by[t].x} y2={by[t].y} />)}
+  </g>
+  <polyline class="route" points={route} />
+  <g class="nodes">
+    {
+      nodes.map((n) => (
+        <g transform={`translate(${n.x} ${n.y})`} class:list={['node', { end: n.label }]}>
+          <circle r={n.label ? 22 : 13} class="halo" />
+          <rect x="-7" y="-11" width="14" height="22" rx="3" />
+          {n.label && <text y="46" text-anchor="middle">{n.label}</text>}
+        </g>
+      ))
+    }
+  </g>
+  <text x="20" y="400" class="cap">NO INTERNET · 4 HOPS · END-TO-END ENCRYPTED</text>
+</svg>
+
+<style>
+  .mesh {
+    width: 100%;
+    height: 100%;
+    color: var(--ink);
+  }
+  .edges line {
+    stroke: var(--line-strong);
+    stroke-width: 1;
+    stroke-dasharray: 3 5;
+  }
+  .route {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-dasharray: 8 10;
+    animation: flow 1.6s linear infinite;
+  }
+  .node rect {
+    fill: var(--paper);
+    stroke: currentColor;
+    stroke-width: 1.5;
+  }
+  .node .halo {
+    fill: var(--paper-2);
+    stroke: var(--line);
+  }
+  .node.end rect {
+    fill: currentColor;
+  }
+  text {
+    font-family: var(--mono);
+    font-size: 15px;
+    fill: currentColor;
+  }
+  .cap {
+    font-size: 11px;
+    fill: var(--ink-3);
+    letter-spacing: 0.06em;
+  }
+  @keyframes flow {
+    to {
+      stroke-dashoffset: -36;
+    }
+  }
+</style>

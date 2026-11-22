@@ -1,0 +1,123 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { site } from '../data/site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  bare?: boolean; // no header/footer (resume print page uses its own chrome)
+}
+const { title, description = site.description, bare = false } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · CS student & developer`;
+const base = Astro.site ?? Astro.url;
+const canonical = new URL(Astro.url.pathname, base).href;
+const ogImage = new URL('/og.png', base).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {!site.launched && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#f2f1ec" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f0f0e" media="(prefers-color-scheme: dark)" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>
+      // Apply saved theme before first paint, and mark JS as available for reveal animations.
+      (function () {
+        var d = document.documentElement;
+        d.classList.add('js');
+        try {
+          var t = localStorage.getItem('theme');
+          if (t === 'light' || t === 'dark') d.setAttribute('data-theme', t);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip sr-only" href="#main">Skip to content</a>
+    {!bare && <Header />}
+    <main id="main">
+      <slot />
+    </main>
+    {!bare && <Footer />}
+
+    <script is:inline>
+      (function () {
+        // Reveal on scroll
+        var els = document.querySelectorAll('[data-reveal]');
+        if ('IntersectionObserver' in window) {
+          var io = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (e) {
+                if (e.isIntersecting) {
+                  e.target.classList.add('in');
+                  io.unobserve(e.target);
+                }
+              });
+            },
+            { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }
+          );
+          els.forEach(function (el) { io.observe(el); });
+        } else {
+          els.forEach(function (el) { el.classList.add('in'); });
+        }
+
+        // Theme toggle
+        var btn = document.querySelector('[data-theme-toggle]');
+        if (btn) {
+          btn.addEventListener('click', function () {
+            var d = document.documentElement;
+            var current = d.getAttribute('data-theme') ||
+              (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            var next = current === 'dark' ? 'light' : 'dark';
+            d.setAttribute('data-theme', next);
+            try { localStorage.setItem('theme', next); } catch (e) {}
+          });
+        }
+
+        // Copy email
+        document.querySelectorAll('[data-copy]').forEach(function (b) {
+          b.addEventListener('click', function () {
+            var text = b.getAttribute('data-copy');
+            var label = b.querySelector('[data-copy-label]');
+            var done = function () {
+              if (!label) return;
+              var old = label.textContent;
+              label.textContent = 'Copied';
+              setTimeout(function () { label.textContent = old; }, 1600);
+            };
+            if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () {});
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip:focus {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    width: auto;
+    height: auto;
+    clip: auto;
+    padding: 10px 14px;
+    background: var(--ink);
+    color: var(--paper);
+    z-index: 100;
+  }
+</style>

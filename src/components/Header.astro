@@ -1,0 +1,140 @@
+---
+import { projects } from '../data/site';
+const path = Astro.url.pathname;
+const count = String(projects.length).padStart(2, '0');
+const nav = [
+  { href: '/#work', label: 'Work', sup: count, active: path.startsWith('/work') },
+  { href: '/about', label: 'About', active: path.startsWith('/about') },
+  { href: '/resume', label: 'Resume', active: path.startsWith('/resume') },
+  { href: '/#contact', label: 'Contact', active: false },
+];
+---
+
+<header class="hdr no-print">
+  <div class="wrap hdr-in">
+    <a href="/" class="logo" aria-label="Kazi Walid Hasan, home">
+      <span class="mark" aria-hidden="true">KW</span>
+      <span class="logo-name">Kazi Walid Hasan</span>
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        {
+          nav.map((n) => (
+            <li>
+              <a href={n.href} class:list={['nav-link', { active: n.active }]} aria-current={n.active ? 'page' : undefined}>
+                {n.label}
+                {n.sup && <sup class="mono">{n.sup}</sup>}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <button class="theme" type="button" data-theme-toggle aria-label="Switch light or dark theme">
+        <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
+          <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
+          <path d="M10 2a8 8 0 0 1 0 16Z" fill="currentColor"></path>
+        </svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .hdr {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in srgb, var(--paper) 82%, transparent);
+    backdrop-filter: saturate(1.4) blur(12px);
+    -webkit-backdrop-filter: saturate(1.4) blur(12px);
+    border-bottom: 1px solid var(--line);
+  }
+  .hdr-in {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    gap: 12px;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .mark {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    border-radius: 3px;
+  }
+  nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(10px, 2.4vw, 28px);
+  }
+  nav ul {
+    display: flex;
+    gap: clamp(12px, 2.4vw, 28px);
+  }
+  .nav-link {
+    font-size: 0.95rem;
+    color: var(--ink-2);
+    transition: color 0.2s;
+    position: relative;
+  }
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--ink);
+  }
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -4px;
+    height: 1px;
+    background: currentColor;
+  }
+  sup {
+    font-size: 0.6rem;
+    margin-left: 2px;
+    color: var(--ink-3);
+    letter-spacing: 0;
+  }
+  .theme {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border: 1px solid var(--line-strong);
+    border-radius: 50%;
+    background: none;
+    color: var(--ink);
+    cursor: pointer;
+    transition: transform 0.4s var(--ease);
+  }
+  .theme:hover {
+    transform: rotate(180deg);
+  }
+  @media (max-width: 720px) {
+    .logo-name {
+      display: none;
+    }
+  }
+  @media (max-width: 380px) {
+    .nav-link {
+      font-size: 0.88rem;
+    }
+    sup {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,47 @@
+---
+import { site } from '../data/site';
+---
+
+<footer class="ftr no-print">
+  <div class="wrap ftr-in">
+    <p class="mono">© 2026 {site.name}</p>
+    <p class="mono ver">
+      <span class="badge">v{site.version}</span>
+      <span class="faint">Version = semester · last updated {site.updated}</span>
+    </p>
+    <p class="mono">
+      <a class="link" href={site.github} target="_blank" rel="noopener">GitHub</a>
+      &nbsp;·&nbsp;
+      <a class="link" href={site.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+    </p>
+  </div>
+</footer>
+
+<style>
+  .ftr {
+    margin-top: clamp(72px, 10vw, 140px);
+    border-top: 1px solid var(--line);
+  }
+  .ftr-in {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px 24px;
+    padding-top: 22px;
+    padding-bottom: 28px;
+  }
+  .ftr p {
+    margin: 0;
+  }
+  .ver {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .badge {
+    padding: 0.25em 0.6em;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+  }
+</style>

@@ -1,0 +1,136 @@
+---
+import { Image } from 'astro:assets';
+import MeshDiagram from './MeshDiagram.astro';
+import type { Project } from '../data/site';
+
+interface Props {
+  project: Project;
+  eager?: boolean;
+}
+const { project, eager = false } = Astro.props;
+const loading = eager ? 'eager' : 'lazy';
+const phones = (project.images ?? []).slice(0, 3);
+---
+
+<div class:list={['plate', `plate--${project.visual}`]}>
+  {
+    project.visual === 'phones' && (
+      <div class="phones">
+        {phones.map((img, i) => (
+          <div class={`phone p${i} bw`}>
+            <Image src={img.src} alt={img.alt} widths={[240, 360, 480]} sizes="(max-width: 720px) 30vw, 200px" loading={loading} />
+          </div>
+        ))}
+      </div>
+    )
+  }
+  {
+    project.visual === 'browser' && project.images?.[0] && (
+      <div class="browser bw">
+        <div class="bar" aria-hidden="true">
+          <i />
+          <i />
+          <i />
+          <span class="mono">nasa-hack-26.pages.dev</span>
+        </div>
+        <Image src={project.images[0].src} alt={project.images[0].alt} widths={[480, 720, 960, 1280]} sizes="(max-width: 900px) 92vw, 640px" loading={loading} />
+      </div>
+    )
+  }
+  {
+    project.visual === 'mesh' && (
+      <div class="mesh-wrap">
+        <MeshDiagram />
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .plate {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    background: var(--paper-2);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+  }
+  /* Phones */
+  .phones {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  .phone {
+    position: absolute;
+    width: 27%;
+    top: 50%;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 5px solid #0d0d0c;
+    background: #0d0d0c;
+    outline: 1px solid var(--line-strong);
+    box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.45);
+    transition: transform 0.8s var(--ease);
+  }
+  .phone :global(img) {
+    width: 100%;
+  }
+  .p0 {
+    left: 11%;
+    transform: translateY(-46%) rotate(-5deg);
+  }
+  .p1 {
+    left: 36.5%;
+    transform: translateY(-54%);
+    z-index: 2;
+  }
+  .p2 {
+    left: 62%;
+    transform: translateY(-46%) rotate(5deg);
+  }
+  :global(a:hover) .p0 {
+    transform: translateY(-48%) rotate(-8deg) translateX(-6%);
+  }
+  :global(a:hover) .p2 {
+    transform: translateY(-48%) rotate(8deg) translateX(6%);
+  }
+  /* Browser */
+  .browser {
+    width: 86%;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--paper);
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 24px 50px -24px rgba(0, 0, 0, 0.45);
+    transition: transform 0.8s var(--ease);
+  }
+  :global(a:hover) .browser {
+    transform: translateY(-6px);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .bar i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+  }
+  .bar span {
+    margin-left: 8px;
+    font-size: 0.62rem;
+    color: var(--ink-3);
+    text-transform: none;
+  }
+  /* Mesh */
+  .mesh-wrap {
+    width: 92%;
+    height: 92%;
+  }
+</style>

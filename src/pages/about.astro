@@ -1,0 +1,232 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import about from '../assets/photos/about.jpg';
+import { site, education, skills, spoken, changelog } from '../data/site';
+const results = changelog.filter((c) => c.tag && c.tag !== 'Building');
+---
+
+<Base title="About" description={`About ${site.name}: education, skills and what I'm working on.`}>
+  <div class="wrap about">
+    <header class="a-head">
+      <p class="mono faint" data-reveal>About</p>
+      <h1 data-reveal style="--d:.05s">Hi, I’m <span class="serif">Walid.</span></h1>
+    </header>
+
+    <div class="a-grid">
+      <figure class="a-photo" data-reveal>
+        <Picture
+          src={about}
+          alt="Kazi Walid Hasan in a suit and glasses, looking to the side, leaning on a railing in front of a brick wall"
+          widths={[400, 640, 900, 1200]}
+          sizes="(max-width: 860px) 92vw, 38vw"
+          formats={['avif', 'webp']}
+        />
+        <figcaption class="mono faint">Fig. 02</figcaption>
+      </figure>
+
+      <div class="a-text">
+        <div class="bio" data-reveal>
+          <p class="big">
+            I’m a third-year Computer Science and Engineering student at Pabna University of Science and Technology,
+            and I learn best by building things.
+          </p>
+          <p>
+            Most of what I know so far came from shipping: mobile apps on my own, and fast, intense weekends at
+            hackathons with my team, Binary Bandits. I like figuring out how things work under the hood, trying new
+            tools, and turning rough ideas into something people can actually use.
+          </p>
+          <p>
+            Right now I’m building Scrapbook, a local-first Android diary, and getting into machine learning
+            research. I’m looking for SWE internships and ML research opportunities where I can learn from people
+            further along than me.
+          </p>
+          <p>
+            Off the keyboard I’m competitive by nature: I played competitive football at high-school level, and I
+            enjoy gaming tournaments and programming contests.
+          </p>
+        </div>
+
+        <section class="block" data-reveal>
+          <h2 class="mono">Education</h2>
+          <ul class="rows">
+            {
+              education.map((e) => (
+                <li>
+                  <div>
+                    <p class="r-title">{e.school}</p>
+                    <p class="muted">{e.detail}</p>
+                    {e.note && <p class="mono faint r-note">{e.note}</p>}
+                  </div>
+                  <span class="mono faint">{e.when}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <section class="block" data-reveal>
+          <h2 class="mono">Hackathons &amp; recognition</h2>
+          <ul class="rows">
+            {
+              results.map((r) => (
+                <li>
+                  <div>
+                    <p class="r-title">{r.title}</p>
+                    <p class="muted">{r.tag}</p>
+                  </div>
+                  <span class="mono faint">{r.date}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <section class="block" data-reveal>
+          <h2 class="mono">Tools I’ve used</h2>
+          <div class="skills">
+            {
+              skills.map((s) => (
+                <div class="skill">
+                  <p class="mono faint">{s.group}</p>
+                  <div class="tags">{s.items.map((i) => <span class="tag">{i}</span>)}</div>
+                </div>
+              ))
+            }
+          </div>
+        </section>
+
+        <section class="block" data-reveal>
+          <h2 class="mono">Languages I speak</h2>
+          <p class="muted">{spoken.join(' · ')}</p>
+        </section>
+
+        <div class="a-cta" data-reveal>
+          <a href="/resume" class="btn btn--solid">View resume</a>
+          <a href="/#contact" class="btn btn--ghost">Get in touch</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .about {
+    padding-top: clamp(32px, 6vw, 72px);
+  }
+  .a-head h1 {
+    font-size: clamp(3.4rem, 11vw, 9rem);
+    letter-spacing: -0.055em;
+    line-height: 0.9;
+    margin: 10px 0 clamp(36px, 6vw, 72px);
+  }
+  .a-head .serif {
+    font-weight: 400;
+  }
+  .a-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(28px, 6vw, 96px);
+    align-items: start;
+  }
+  .a-photo {
+    margin: 0;
+    position: sticky;
+    top: 84px;
+  }
+  .a-photo :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--radius);
+  }
+  .a-photo figcaption {
+    padding-top: 10px;
+  }
+  .bio p {
+    color: var(--ink-2);
+    font-size: 1.08rem;
+    line-height: 1.65;
+    max-width: 58ch;
+  }
+  .bio .big {
+    color: var(--ink);
+    font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+  .block {
+    margin-top: clamp(40px, 6vw, 64px);
+  }
+  .block h2 {
+    font-size: 0.75rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .rows li {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .rows p {
+    margin: 0;
+  }
+  .r-title {
+    font-weight: 550;
+    font-size: 1.08rem;
+    letter-spacing: -0.01em;
+  }
+  .r-note {
+    margin-top: 4px !important;
+  }
+  .rows .mono {
+    white-space: nowrap;
+  }
+  .skills {
+    display: grid;
+    gap: 16px;
+    padding-top: 16px;
+  }
+  .skill {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+  .skill p {
+    margin: 4px 0 0;
+  }
+  .block > p.muted {
+    padding-top: 16px;
+  }
+  .a-cta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 48px;
+  }
+  @media (max-width: 860px) {
+    .a-grid {
+      grid-template-columns: 1fr;
+    }
+    .a-photo {
+      position: static;
+      max-width: 520px;
+    }
+  }
+  @media (max-width: 520px) {
+    .rows li {
+      flex-direction: column;
+      gap: 6px;
+    }
+    .skill {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+  }
+</style>
