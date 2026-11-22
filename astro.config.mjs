@@ -9,4 +9,8 @@ const SITE_URL = process.env.SITE_URL ?? 'https://kaziwalid.pages.dev';
 export default defineConfig({
   site: SITE_URL,
   devToolbar: { enabled: false },
+  // Emit about.html instead of about/index.html so Cloudflare Pages serves
+  // /about directly instead of redirecting to /about/.
+  build: { format: 'file' },
+  trailingSlash: 'never',
 });
